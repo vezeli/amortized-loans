@@ -25,7 +25,7 @@ def plot_total_payment_wrt_time(rates: list[R], rf: R = 0) -> None:
         dt, dx = np.diff(ts), np.diff(xs)
         dxdt = dx[0]/dt[0]
         plt.plot(ts[1:], xs[1:], label=f"r={rate:.2%}")
-        plt.plot(ts[1:], xs[0]+dxdt*np.cumsum(np.diff(ts)), 'k--')
+        plt.plot(ts[1:], xs[0]+dxdt*np.cumsum(np.diff(ts)), 'k--', linewidth=1.0)
 
     XLABEL, YLABEL = "Time [years]", "(Interest + Amortization) / Principal"
     plt.xlabel(XLABEL)
@@ -163,7 +163,7 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
 
     Y_LIMIT = (rms3[0]+ams3[0]).sum() * (1+0.1)
 
-    ax1.set_title(f"Payment = {round(rms1[0] + ams1[0], -2):,.0f} SEK; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.2%}")
+    ax1.set_title(f"Rate: {r1:.2%} \n Payment = {round(rms1[0] + ams1[0], -2):,.0f} SEK; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.2%}")
     ax1.plot(ts, rms1[:-1], "k-.")
     ax1.plot(ts, payment1[:-1], "k")
     ax1.fill_between(x=ts, y1=rms1[:-1], y2=np.full(rms1[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -176,7 +176,7 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
     ax1.set_xlabel(TIME_LABEL); ax1.set_ylabel(PAYMENT_LABEL)
     ax1.grid(); ax1.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax2.set_title(f"Payment: {round(rms2[0] + ams2[0], -2):,.0f} SEK; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.2%}")
+    ax2.set_title(f"Rate: {r2:.2%} \n Payment: {round(rms2[0] + ams2[0], -2):,.0f} SEK; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.2%}")
     ax2.plot(ts, rms2[:-1], "k-.")
     ax2.plot(ts, payment2[:-1], "k")
     ax2.fill_between(x=ts, y1=rms2[:-1], y2=np.full(rms2[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -189,7 +189,7 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
     ax2.set_xlabel(TIME_LABEL);
     ax2.grid(); ax2.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax3.set_title(f"Payment: {round(rms3[0] + ams3[0], -2):,.0f} SEK; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.2%}")
+    ax3.set_title(f"Rate: {r3:.2%} \n Payment: {round(rms3[0] + ams3[0], -2):,.0f} SEK; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.2%}")
     ax3.plot(ts, rms3[:-1], "k-.")
     ax3.plot(ts, payment3[:-1], "k")
     ax3.fill_between(x=ts, y1=rms3[:-1], y2=np.full(rms3[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -272,7 +272,7 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
 
     Y_LIMIT = (rms1[0]+ams1[0]).sum() * (1+0.1)
 
-    ax1.set_title(f"Payment: {round(rms1[0] + ams1[0], -2):,.0f}; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.2%}")
+    ax1.set_title(f"Rate: {r:.2%} \n Payment: {round(rms1[0] + ams1[0], -2):,.0f}; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.2%}")
     ax1.plot(ts1, rms1[:-1], "k-.")
     ax1.plot(ts1, payment1[:-1], "k")
     ax1.fill_between(x=ts1, y1=rms1[:-1], y2=np.full(rms1[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -285,7 +285,7 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
     ax1.set_ylabel(PAYMENT_LABEL)
     ax1.grid(); ax1.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax2.set_title(f"Payment: {round(rms2[0] + ams2[0], -2):,.0f}; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.2%}")
+    ax2.set_title(f"Payment: {r:.2%} \n {round(rms2[0] + ams2[0], -2):,.0f}; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.2%}")
     ax2.plot(ts2, rms2[:-1], "k-.")
     ax2.plot(ts2, payment2[:-1], "k")
     ax2.fill_between(x=ts2, y1=rms2[:-1], y2=np.full(rms2[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -298,7 +298,7 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
     ax2.set_ylabel(PAYMENT_LABEL)
     ax2.grid(); ax2.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax3.set_title(f"Payment: {round(rms3[0] + ams3[0], -2):,.0f}; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.2%}")
+    ax3.set_title(f"Payment: {r:.2%} \n {round(rms3[0] + ams3[0], -2):,.0f}; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.2%}")
     ax3.plot(ts3, rms3[:-1], "k-.")
     ax3.plot(ts3, payment3[:-1], "k")
     ax3.fill_between(x=ts3, y1=rms3[:-1], y2=np.full(rms3[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -340,13 +340,13 @@ def plot_term_sensitivity():
     )
 
     fig1.colorbar(plot1, shrink=0.5, aspect=5)
-    ax1.set_xlabel("r")
+    ax1.set_xlabel(r"$r$")
     ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2%}"))
     ax1.xaxis.set_major_locator(mticker.MultipleLocator(0.005))
-    ax1.set_ylabel("A/P")
+    ax1.set_ylabel(r"$\rho$")
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2%}"))
     ax1.yaxis.set_major_locator(mticker.MultipleLocator(0.005))
-    ax1.set_zlabel("dT/dr")
+    ax1.set_zlabel(r"$\partial T / \partial r$")
     ax1.view_init(elev=25, azim=-140)
 
     fig2 = plt.figure()
@@ -360,13 +360,13 @@ def plot_term_sensitivity():
     )
 
     fig2.colorbar(surf2, shrink=0.5, aspect=5)
-    ax2.set_xlabel("r")
+    ax2.set_xlabel(r"$r$")
     ax2.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2%}"))
     ax2.xaxis.set_major_locator(mticker.MultipleLocator(0.005))
-    ax2.set_ylabel("A/P")
+    ax2.set_ylabel(r"$\rho$")
     ax2.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2%}"))
     ax2.yaxis.set_major_locator(mticker.MultipleLocator(0.005))
-    ax2.set_zlabel("dT/d(A/P)")
+    ax2.set_zlabel(r"$\partial T / \partial \rho$")
     ax2.view_init(elev=25, azim=-140)
 
     plt.show()
