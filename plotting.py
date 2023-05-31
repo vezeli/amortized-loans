@@ -78,7 +78,7 @@ def plot_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
 
     PAYMENT_LABEL = f"Payments [{CCY}]"
 
-    ax.set_title(f"Rate: {r:.2%}; Interest / Amortization = {rms[:-1].sum()/ams[:-1].sum():.2%}")
+    ax.set_title(f"Payment = {round(rms[0] + ams[0], -2):,.0f} SEK; Interest / Amortization = {rms[:-1].sum()/ams[:-1].sum():.2%}")
     ax.plot(ts, rms[:-1], "k-.")
     ax.plot(ts, payment[:-1], "k")
     ax.fill_between(x=ts, y1=rms[:-1], y2=np.full(rms[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -98,6 +98,7 @@ def plot_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax.tick_params(axis="x", rotation=45)
     ax.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:.0%}"))
+    ax.set_yscale('log')
     ax.set_xlabel(TIME_LABEL); ax.set_ylabel("Payment / Outstanding principal")
     ax.grid(); ax.legend(loc=2)
 
