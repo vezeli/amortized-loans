@@ -16,6 +16,10 @@ def get_rate(r: R, t: R) -> R:
     return r * np.power(1+r, t) / (np.power(1+r, t) - 1)
 
 
+def get_payment(p: R, r: R, t: R) -> R:
+    return p * get_rate(r, t)
+
+
 def get_loan_term(p: R, a: R, r: R) -> R:
     """
     Calculates loan term of an amortized loan with loan principal `p`, monthly
@@ -78,7 +82,7 @@ def _discount(rs: tuple[np.ndarray, np.ndarray, np.ndarray], rf: R) -> R:
     return pms, rms, ams
 
 
-def discounted_loan_dynamics(p: R, r: R, t: R, rf: R) -> R:
+def discounted_loan_dynamics(p: R, r: R, t: R, rf: R) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return _discount(loan_dynamics(p, r, t), rf)
 
 

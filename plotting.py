@@ -19,15 +19,15 @@ def plot_total_payment_wrt_time(rates: list[R], rf: R = 0) -> None:
     flat discount rate and for non-zero value of `rf` future loan payments are
     discounted.
     """
-    _T_START, _T_END = 5, 31
+    _T_START, _T_END = 4, 31
     for rate in rates:
         ts, xs = total_payment_wrt_time(rate, _T_START, _T_END, rf)
         dt, dx = np.diff(ts), np.diff(xs)
         dxdt = dx[0]/dt[0]
-        plt.plot(ts[1:], xs[1:], label=f"{rate:.2%}")
+        plt.plot(ts[1:], xs[1:], label=f"r={rate:.2%}")
         plt.plot(ts[1:], xs[0]+dxdt*np.cumsum(np.diff(ts)), 'k--')
 
-    XLABEL, YLABEL = "Time [Y]", "(Interest + Amortization) / Principal"
+    XLABEL, YLABEL = "Time [years]", "(Interest + Amortization) / Principal"
     plt.xlabel(XLABEL)
     plt.ylabel(YLABEL)
     plt.grid(); plt.legend()
@@ -35,7 +35,7 @@ def plot_total_payment_wrt_time(rates: list[R], rf: R = 0) -> None:
     plt.show()
 
 
-def plot_discount_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
+def plot_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
     """
     Plots figures showing loan dynamics for the loan with principal `p`,
     interest rate `r` and term `t`. `rf` is the flat discount rate for
@@ -56,9 +56,11 @@ def plot_discount_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
 
     TIME_LABEL = "Date"
 
+    _base = 2 if t < 20 else 5 
+
     ax.set_title(f"P: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Loan term: {t} years")
     ax.plot(ts, pms[:-1], "k-")
-    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax.tick_params(axis="x", rotation=45)
     ax.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
@@ -76,31 +78,33 @@ def plot_discount_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
 
     PAYMENT_LABEL = f"Payments [{CCY}]"
 
-    ax.set_title(f"Rate: {r:.2%}; Interest / Amortization = {rms[:-1].sum()/ams[:-1].sum():.4f}")
+    ax.set_title(f"Rate: {r:.2%}; Interest / Amortization = {rms[:-1].sum()/ams[:-1].sum():.2%}")
     ax.plot(ts, rms[:-1], "k-.")
     ax.plot(ts, payment[:-1], "k")
     ax.fill_between(x=ts, y1=rms[:-1], y2=np.full(rms[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
     ax.fill_between(x=ts, y1=payment[:-1], y2=rms[:-1], color=COLOR2, alpha=ALPHA2) 
-    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax.tick_params(axis="x", rotation=45)
     ax.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
-    ax.set_ylim(0, (ams[0]+rms[0]) * (1 + 0.1))
+    ax.set_ylim(0, (ams[0]+rms[0]) * (1 + 0.3))
     ax.grid(); ax.legend(handles=LEGEND_HANDLES, loc=1)
 
     _, ax = plt.subplots(1, 1)
 
     ax.plot(ts, rms[:-1]/pms[:-1], "k-.", label="Interest")
     ax.plot(ts, ams[:-1]/pms[:-1], "k", label="Amortization")
-    ax.xaxis.set_major_locator(mdates.YearLocator())
+    ax.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax.tick_params(axis="x", rotation=45)
     ax.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:.0%}"))
     ax.set_xlabel(TIME_LABEL); ax.set_ylabel("Payment / Outstanding principal")
-    ax.grid(); ax.legend(loc=1)
+    ax.grid(); ax.legend(loc=2)
 
-    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t} Y => {np.sum(payment[:-1])/p:.4f}x")
 
+    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t} Y => {(payment[:-1].sum()-p)/p:.2%}")
+
+    plt.tight_layout()
     plt.show()
 
 
@@ -131,11 +135,13 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
 
     TIME_LABEL = "Date"
 
+    _base = 2 if t < 20 else 5 
+
     ax1.set_title(f"P: {p:,.0f} {CCY}; Loan term: {t} years")
     ax1.plot(ts, pms1[:-1], "k-.", label=f"{r1:.2%}")
     ax1.plot(ts, pms2[:-1], "k--", label=f"{r2:.2%}")
     ax1.plot(ts, pms3[:-1], "k", label=f"{r3:.2%}")
-    ax1.xaxis.set_major_locator(mdates.YearLocator())
+    ax1.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax1.tick_params(axis="x", rotation=45)
     ax1.set_ylim(0, p*(1+0.05))
@@ -143,8 +149,7 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
     ax1.set_xlabel(TIME_LABEL); ax1.set_ylabel(f"Outstanding principal [{CCY}]")
     ax1.grid(); ax1.legend(loc=1)
 
-    _, (ax1, ax2, ax3) = plt.subplots(1, 3, sharey=True)
-
+    _, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
 
     COLOR1, ALPHA1 = "blue", 0.20
     COLOR2, ALPHA2 = "lightblue", 0.50
@@ -157,13 +162,12 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
 
     Y_LIMIT = (rms3[0]+ams3[0]).sum() * (1+0.1)
 
-
-    ax1.set_title(f"Rate: {r1:.2%}; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.4f}")
+    ax1.set_title(f"Payment = {round(rms1[0] + ams1[0], -2):,.0f} SEK; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.2%}")
     ax1.plot(ts, rms1[:-1], "k-.")
     ax1.plot(ts, payment1[:-1], "k")
     ax1.fill_between(x=ts, y1=rms1[:-1], y2=np.full(rms1[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
     ax1.fill_between(x=ts, y1=payment1[:-1], y2=rms1[:-1], color=COLOR2, alpha=ALPHA2) 
-    ax1.xaxis.set_major_locator(mdates.YearLocator(base=5))
+    ax1.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax1.tick_params(axis="x", rotation=45)
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
@@ -171,12 +175,12 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
     ax1.set_xlabel(TIME_LABEL); ax1.set_ylabel(PAYMENT_LABEL)
     ax1.grid(); ax1.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax2.set_title(f"Rate: {r2:.2%}; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.4f}")
+    ax2.set_title(f"Payment: {round(rms2[0] + ams2[0], -2):,.0f} SEK; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.2%}")
     ax2.plot(ts, rms2[:-1], "k-.")
     ax2.plot(ts, payment2[:-1], "k")
     ax2.fill_between(x=ts, y1=rms2[:-1], y2=np.full(rms2[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
     ax2.fill_between(x=ts, y1=payment2[:-1], y2=rms2[:-1], color=COLOR2, alpha=ALPHA2) 
-    ax2.xaxis.set_major_locator(mdates.YearLocator(base=5))
+    ax2.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax2.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax2.tick_params(axis="x", rotation=45)
     ax2.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
@@ -184,12 +188,12 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
     ax2.set_xlabel(TIME_LABEL);
     ax2.grid(); ax2.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax3.set_title(f"Rate: {r3:.2%}; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.4f}")
+    ax3.set_title(f"Payment: {round(rms3[0] + ams3[0], -2):,.0f} SEK; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.2%}")
     ax3.plot(ts, rms3[:-1], "k-.")
     ax3.plot(ts, payment3[:-1], "k")
     ax3.fill_between(x=ts, y1=rms3[:-1], y2=np.full(rms3[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
     ax3.fill_between(x=ts, y1=payment3[:-1], y2=rms3[:-1], color=COLOR2, alpha=ALPHA2) 
-    ax3.xaxis.set_major_locator(mdates.YearLocator(base=5))
+    ax3.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax3.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax3.tick_params(axis="x", rotation=45)
     ax3.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
@@ -197,10 +201,11 @@ def plot_rate_difference(p: R, r1: R, r2: R, r3: R, t: R, rf: R = 0.00) -> None:
     ax3.set_xlabel(TIME_LABEL);
     ax3.grid(); ax3.legend(handles=LEGEND_HANDLES, loc=1)
 
-    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r1:.2%}; Term: {t} Y => {np.sum(payment1[:-1])/p:.4f}x")
-    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r2:.2%}; Term: {t} Y => {np.sum(payment2[:-1])/p:.4f}x")
-    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r3:.2%}; Term: {t} Y => {np.sum(payment3[:-1])/p:.4f}x")
+    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r1:.2%}; Term: {t} Y => {(payment1[:-1].sum()-p)/p:.2%}")
+    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r2:.2%}; Term: {t} Y => {(payment2[:-1].sum()-p)/p:.2%}")
+    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r3:.2%}; Term: {t} Y => {(payment3[:-1].sum()-p)/p:.2%}")
 
+    plt.tight_layout()
     plt.show()
 
 
@@ -239,11 +244,13 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
 
     TIME_LABEL = "Date"
 
+    _base = 2 if t3 < 20 else 5
+
     ax1.set_title(f"P: {p:,.0f} {CCY}; Interest rate: {r:.2%}")
     ax1.plot(ts1, pms1[:-1], "k-.", label=f"{t1} years")
     ax1.plot(ts2, pms2[:-1], "k--", label=f"{t2} years")
     ax1.plot(ts3, pms3[:-1], "k", label=f"{t3} years")
-    ax1.xaxis.set_major_locator(mdates.YearLocator())
+    ax1.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax1.tick_params(axis="x", rotation=45)
     ax1.set_ylim(0, p*(1+0.05))
@@ -264,12 +271,12 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
 
     Y_LIMIT = (rms1[0]+ams1[0]).sum() * (1+0.1)
 
-    ax1.set_title(f"Rate: {r:.2%}; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.4f}")
+    ax1.set_title(f"Payment: {round(rms1[0] + ams1[0], -2):,.0f}; Interest / Amortization = {rms1[:-1].sum()/ams1[:-1].sum():.2%}")
     ax1.plot(ts1, rms1[:-1], "k-.")
     ax1.plot(ts1, payment1[:-1], "k")
     ax1.fill_between(x=ts1, y1=rms1[:-1], y2=np.full(rms1[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
     ax1.fill_between(x=ts1, y1=payment1[:-1], y2=rms1[:-1], color=COLOR2, alpha=ALPHA2) 
-    ax1.xaxis.set_major_locator(mdates.YearLocator(base=5))
+    ax1.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax1.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax1.tick_params(axis="x", rotation=45)
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
@@ -277,12 +284,12 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
     ax1.set_ylabel(PAYMENT_LABEL)
     ax1.grid(); ax1.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax2.set_title(f"Rate: {r:.2%}; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.4f}")
+    ax2.set_title(f"Payment: {round(rms2[0] + ams2[0], -2):,.0f}; Interest / Amortization = {rms2[:-1].sum()/ams2[:-1].sum():.2%}")
     ax2.plot(ts2, rms2[:-1], "k-.")
     ax2.plot(ts2, payment2[:-1], "k")
     ax2.fill_between(x=ts2, y1=rms2[:-1], y2=np.full(rms2[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
     ax2.fill_between(x=ts2, y1=payment2[:-1], y2=rms2[:-1], color=COLOR2, alpha=ALPHA2) 
-    ax2.xaxis.set_major_locator(mdates.YearLocator(base=5))
+    ax2.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax2.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax2.tick_params(axis="x", rotation=45)
     ax2.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0f}"))
@@ -290,7 +297,7 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
     ax2.set_ylabel(PAYMENT_LABEL)
     ax2.grid(); ax2.legend(handles=LEGEND_HANDLES, loc=1)
 
-    ax3.set_title(f"Rate: {r:.2%}; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.4f}")
+    ax3.set_title(f"Payment: {round(rms3[0] + ams3[0], -2):,.0f}; Interest / Amortization = {rms3[:-1].sum()/ams3[:-1].sum():.2%}")
     ax3.plot(ts3, rms3[:-1], "k-.")
     ax3.plot(ts3, payment3[:-1], "k")
     ax3.fill_between(x=ts3, y1=rms3[:-1], y2=np.full(rms3[:-1].size, 0), color=COLOR1, alpha=ALPHA1) 
@@ -303,9 +310,9 @@ def plot_term_difference(p: R, r: R, t1: R, t2: R, t3: R, rf: R = 0.00) -> None:
     ax3.set_xlabel(TIME_LABEL); ax3.set_ylabel(PAYMENT_LABEL)
     ax3.grid(); ax3.legend(handles=LEGEND_HANDLES, loc=1)
 
-    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t1} Y => {np.sum(payment1[:-1])/p:.4f}x")
-    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t2} Y => {np.sum(payment2[:-1])/p:.4f}x")
-    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t3} Y => {np.sum(payment3[:-1])/p:.4f}x")
+    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t1} Y => {(payment1[:-1].sum()-p)/p:.2%}")
+    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t2} Y => {(payment2[:-1].sum()-p)/p:.2%}")
+    print(f"Principal: {p:,.0f} {CCY}; Interest rate: {r:.2%}; Term: {t3} Y => {(payment3[:-1].sum()-p)/p:.2%}")
 
     plt.show()
 
