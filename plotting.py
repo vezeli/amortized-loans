@@ -27,7 +27,7 @@ def plot_total_payment_wrt_time(rates: list[R], rf: R = 0) -> None:
         plt.plot(ts[1:], xs[1:], label=f"r={rate:.2%}")
         plt.plot(ts[1:], xs[0] + dxdt * np.cumsum(np.diff(ts)), "k--", linewidth=1.0)
 
-    XLABEL, YLABEL = "Time [years]", "(Interest + Amortization) / Principal"
+    XLABEL, YLABEL = "t [years]", "$\eta$"
     plt.xlabel(XLABEL)
     plt.ylabel(YLABEL)
     plt.grid()
@@ -97,15 +97,17 @@ def plot_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
 
     _, ax = plt.subplots(1, 1)
 
-    ax.plot(ts, rms[:-1] / pms[:-1], "k-.", label="Interest")
-    ax.plot(ts, ams[:-1] / pms[:-1], "k", label="Amortization")
+    ax.plot(ts, rms[:-1] / pms[:-1], "k-.", label="r")
+    ax.plot(ts, ams[:-1] / pms[:-1], "k", label="$A/P(t) - r$")
     ax.xaxis.set_major_locator(mdates.YearLocator(base=_base))
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax.tick_params(axis="x", rotation=45)
-    ax.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:.0%}"))
-    ax.set_yscale("log")
     ax.set_xlabel(TIME_LABEL)
-    ax.set_ylabel("Payment / Outstanding principal")
+    ax.set_yscale("log")
+    locator = mticker.FixedLocator([0.01, 0.1, 1])
+    ax.yaxis.set_major_locator(locator)
+    formatter = mticker.FixedFormatter(['1%', '10%', '100%'])
+    ax.yaxis.set_major_formatter(formatter)
     ax.grid()
     ax.legend(loc=2)
 
