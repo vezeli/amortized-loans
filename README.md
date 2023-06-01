@@ -33,12 +33,6 @@ or Windows Powershell
 python -m pip install -r requirements.txt
 ```
 
-# Usage
-
-The functionality is suitable for interactive usage in any interactive Python
-environment (e.g., IPtython, Jupyter). The code can also be used as a
-third-party library.
-
 # Disclaimer
 
 This project is not a substitute for professional advice and should not be used
