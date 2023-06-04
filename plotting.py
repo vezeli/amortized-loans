@@ -9,6 +9,7 @@ import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 
+from fair_price_model import equivalent_principal_matching_T
 from loan_model import discounted_loan_dynamics, total_payment_wrt_time
 
 
@@ -106,7 +107,7 @@ def plot_loan_dynamics(p: R, r: R, t: R, rf: R = 0.00) -> None:
     ax.set_yscale("log")
     locator = mticker.FixedLocator([0.01, 0.1, 1])
     ax.yaxis.set_major_locator(locator)
-    formatter = mticker.FixedFormatter(['1%', '10%', '100%'])
+    formatter = mticker.FixedFormatter(["1%", "10%", "100%"])
     ax.yaxis.set_major_formatter(formatter)
     ax.grid()
     ax.legend(loc=2)
@@ -430,3 +431,49 @@ def plot_term_sensitivity():
 
 
 # plot_term_sensitivity()
+
+
+def plot_matching_T(
+    p1: R,
+    rho: np.ndarray,
+    r1: R,
+    r2: R,
+    tau: R,
+    deltas: np.ndarray,
+    gamma: R,
+    rf: R,
+    dt: R,
+) -> None:
+    s1s = p1 / rho
+
+    s1s, deltas = np.meshgrid(s1s, deltas)
+    dp = equivalent_principal_matching_T(p1, s1s, r1, r2, tau, deltas, gamma) * np.exp(
+        -rf * dt
+    )
+
+    fig1 = plt.figure()
+    ax1 = fig1.add_subplot(111, projection="3d")
+    plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z=1 - dp / p1, cmap=cm.coolwarm)
+
+    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5)
+    ax1.set_xlabel(r"$\rho$")
+    ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
+    ax1.set_ylabel(r"$\delta$")
+    ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
+    ax1.set_zlabel(r"$1-\mathrm{d}p/p$")
+    ax1.zaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0%}"))
+    ax1.view_init(elev=20, azim=150)
+
+    plt.show()
+
+
+"""
+gamma, tau, deltas = 0.02, 0.30, np.arange(0.3, 1.01, 0.01)
+p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5, 0.05)
+r2, s2 = 0.0480, 500_000 * (1 + 0.02)
+rf, dt = 0.0025, 1.5
+
+from plotting import plot_matching_T
+
+plot_matching_T(p1, rhos, r1, r2, tau, deltas, gamma, rf, dt)
+"""
