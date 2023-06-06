@@ -456,7 +456,7 @@ def plot_matching_T(
     plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z=1 - dp / p1, cmap=cm.coolwarm)
 
     colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5)
-    ax1.set_xlabel(r"$\rho$")
+    ax1.set_xlabel(r"$\rho=P/S$")
     ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
     ax1.set_ylabel(r"$\delta$")
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
