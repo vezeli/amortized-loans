@@ -9,8 +9,8 @@ import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 
-from fair_price_model import equivalent_principal_matching_T
-from loan_model import discounted_loan_dynamics, total_payment_wrt_time
+from src.fair_price_model import equivalent_principal_matching_T
+from src.loan_model import discounted_loan_dynamics, total_payment_wrt_time
 
 
 def plot_total_payment_wrt_time(rates: list[R], rf: R = 0) -> None:

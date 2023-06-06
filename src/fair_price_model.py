@@ -3,8 +3,6 @@ from numbers import Real as R
 
 import numpy as np
 
-from loan_model import get_loan_term, get_payment, get_rate
-
 
 def equivalent_principal_matching_T(
     p1: R, s1: R, r1: R, r2: R, tau: R, delta: R, gamma: R
