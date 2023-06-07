@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from numbers import Integral as N
 from numbers import Real as R
 
@@ -477,3 +479,30 @@ from plotting import plot_matching_T
 
 plot_matching_T(p1, rhos, r1, r2, tau, deltas, gamma, rf, dt)
 """
+
+
+def plot_interest_rate_vs_home_prices() -> None:
+    script_path = Path(__file__).resolve()
+    data_path = script_path.parent.parent
+    data_location = data_path / "data/bbg.csv"
+
+    df = pd.read_csv(data_location, parse_dates=["Date"])
+    ts, rates, prices = np.split(df.values, df.shape[1], axis=1)
+
+    fig, ax1 = plt.subplots()
+
+    ax1.plot(ts, rates, color=(color1 := "k"))
+    ax1.set_xlabel("Date")
+    ax1.tick_params(axis="x", rotation=45)
+    ax1.set_ylabel("Riskbank's policy rate [%]", color=color1)
+    ax1.tick_params(axis='y', labelcolor=color1)
+
+    ax2 = ax1.twinx()
+
+    ax2.plot(ts, prices, color=(color2 := "forestgreen"))
+    ax2.set_ylabel("Sweden Real Estate Pricing Index (inverted)", color=color2)
+    ax2.tick_params(axis='y', labelcolor=color2)
+
+    plt.tight_layout()
+
+    plt.show()
