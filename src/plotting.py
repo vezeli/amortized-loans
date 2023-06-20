@@ -491,7 +491,7 @@ def plot_interest_rate_vs_home_prices() -> None:
 
     fig, ax1 = plt.subplots()
 
-    ax1.plot(ts, rates, color=(color1 := "gray"))
+    ax1.plot(ts, rates, color=(color1 := "red"))
     ax1.set_xlabel("Date")
     ax1.tick_params(axis="x", rotation=45)
     ax1.set_ylabel("Riskbank's policy rate [%]", color=color1)
@@ -499,7 +499,7 @@ def plot_interest_rate_vs_home_prices() -> None:
 
     ax2 = ax1.twinx()
 
-    ax2.plot(ts, prices, color=(color2 := "black"))
+    ax2.plot(ts, prices, color=(color2 := "blue"))
     ax2.set_ylabel("Sweden Real Estate Pricing Index (inverted)", color=color2)
     ax2.tick_params(axis='y', labelcolor=color2)
 
