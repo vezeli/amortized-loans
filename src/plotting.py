@@ -11,7 +11,7 @@ import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 
-from src.fair_price_model import annuity_matching_T
+from src.fair_price_model import amortized_matching_T, annuity_matching_T
 from src.annuity_loan_model import discounted_loan_dynamics, total_payment_wrt_time
 
 
@@ -443,15 +443,11 @@ def plot_annuity_matching_T(
     tau: R,
     deltas: np.ndarray,
     gamma: R,
-    rf: R,
-    dt: R,
 ) -> None:
     s1s = p1 / rho
 
     s1s, deltas = np.meshgrid(s1s, deltas)
-    dp = annuity_matching_T(p1, s1s, r1, r2, tau, deltas, gamma) * np.exp(
-        -rf * dt
-    )
+    dp = annuity_matching_T(p1, s1s, r1, r2, tau, deltas, gamma)
 
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111, projection="3d")
@@ -472,12 +468,52 @@ def plot_annuity_matching_T(
 """
 gamma, tau, deltas = 0.02, 0.30, np.arange(0.3, 1.01, 0.01)
 p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5, 0.05)
-r2, s2 = 0.0480, 500_000 * (1 + 0.02)
-rf, dt = 0.0025, 1.5
+r2, s2 = 0.0480, 500_000 * (1 + gamma)
 
 from plotting import plot_annuity_matching_T
 
-plot_annuity_matching_T(p1, rhos, r1, r2, tau, deltas, gamma, rf, dt)
+plot_annuity_matching_T(p1, rhos, r1, r2, tau, deltas, gamma)
+"""
+
+
+def plot_amortized_matching_T(
+    p1: R,
+    rho: np.ndarray,
+    r1: R,
+    r2: R,
+    tau: R,
+    deltas: np.ndarray,
+    gamma: R,
+) -> None:
+    s1s = p1 / rho
+
+    s1s, deltas = np.meshgrid(s1s, deltas)
+    dp = amortized_matching_T(p1, s1s, r1, r2, tau, deltas, gamma)
+
+    fig1 = plt.figure()
+    ax1 = fig1.add_subplot(111, projection="3d")
+    plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z=1 - dp / p1, cmap=cm.coolwarm)
+
+    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5)
+    ax1.set_xlabel(r"$\rho=P/S$")
+    ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
+    ax1.set_ylabel(r"$\delta$")
+    ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
+    ax1.set_zlabel(r"$1-\mathrm{d}p/p$")
+    ax1.zaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0%}"))
+    ax1.view_init(elev=20, azim=150)
+
+    plt.show()
+
+
+"""
+gamma, tau, deltas = 0.02, 0.30, np.arange(0.3, 1.01, 0.01)
+p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5, 0.05)
+r2, s2 = 0.0480, 500_000 * (1 + gamma)
+
+from plotting import plot_amortized_matching_T
+
+plot_amortized_matching_T(p1, rhos, r1, r2, tau, deltas, gamma)
 """
 
 
