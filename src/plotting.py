@@ -11,8 +11,8 @@ import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 
-from src.fair_price_model import equivalent_principal_matching_T
-from src.loan_model import discounted_loan_dynamics, total_payment_wrt_time
+from src.fair_price_model import annuity_matching_T
+from src.annuity_loan_model import discounted_loan_dynamics, total_payment_wrt_time
 
 
 def plot_total_payment_wrt_time(rates: list[R], rf: R = 0) -> None:
@@ -435,7 +435,7 @@ def plot_term_sensitivity():
 # plot_term_sensitivity()
 
 
-def plot_matching_T(
+def plot_annuity_matching_T(
     p1: R,
     rho: np.ndarray,
     r1: R,
@@ -449,7 +449,7 @@ def plot_matching_T(
     s1s = p1 / rho
 
     s1s, deltas = np.meshgrid(s1s, deltas)
-    dp = equivalent_principal_matching_T(p1, s1s, r1, r2, tau, deltas, gamma) * np.exp(
+    dp = annuity_matching_T(p1, s1s, r1, r2, tau, deltas, gamma) * np.exp(
         -rf * dt
     )
 
@@ -475,9 +475,9 @@ p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5, 0.05)
 r2, s2 = 0.0480, 500_000 * (1 + 0.02)
 rf, dt = 0.0025, 1.5
 
-from plotting import plot_matching_T
+from plotting import plot_annuity_matching_T
 
-plot_matching_T(p1, rhos, r1, r2, tau, deltas, gamma, rf, dt)
+plot_annuity_matching_T(p1, rhos, r1, r2, tau, deltas, gamma, rf, dt)
 """
 
 

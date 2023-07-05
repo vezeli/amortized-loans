@@ -4,7 +4,7 @@ from numbers import Real as R
 import numpy as np
 
 
-def equivalent_principal_matching_T(
+def annuity_matching_T(
     p1: R, s1: R, r1: R, r2: R, tau: R, delta: R, gamma: R
 ) -> R:
     s1 = s1
