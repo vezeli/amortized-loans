@@ -466,11 +466,13 @@ def plot_annuity_matching_T(
 
 
 """
-gamma, tau, deltas = 0.02, 0.30, np.arange(0.3, 1.01, 0.01)
-p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5, 0.05)
-r2, s2 = 0.0480, 500_000 * (1 + gamma)
+import numpy as np
 
 from plotting import plot_annuity_matching_T
+
+gamma, tau, deltas = 0.02, 0.30, np.arange(0.25, 1.01, 0.01)
+p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5.5, 0.05)
+r2, s2 = 0.050, 500_000 * (1 + gamma)
 
 plot_annuity_matching_T(p1, rhos, r1, r2, tau, deltas, gamma)
 """
@@ -507,11 +509,13 @@ def plot_amortized_matching_T(
 
 
 """
-gamma, tau, deltas = 0.02, 0.30, np.arange(0.3, 1.01, 0.01)
-p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5, 0.05)
-r2, s2 = 0.0480, 500_000 * (1 + gamma)
+import numpy as np
 
 from plotting import plot_amortized_matching_T
+
+gamma, tau, deltas = 0.02, 0.30, np.arange(0.25, 1.01, 0.01)
+p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5.5, 0.05)
+r2, s2 = 0.050, 500_000 * (1 + gamma)
 
 plot_amortized_matching_T(p1, rhos, r1, r2, tau, deltas, gamma)
 """
