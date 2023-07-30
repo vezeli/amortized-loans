@@ -455,13 +455,17 @@ def plot_annuity_matching_T(
     ax1 = fig1.add_subplot(111, projection="3d")
     plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z= (p2 - p1) / p1 * (1 - d), cmap=cm.coolwarm_r)
 
-    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5, pad=0.125)
+    cbar_locator = mticker.MultipleLocator(base=0.04)
+    cbar_formatter = mticker.StrMethodFormatter("{x:,.0%}")
+    colorbar = fig1.colorbar(plot1, shrink=0.6, aspect=5, pad=0.125, format=cbar_formatter, ticks=cbar_locator)
     ax1.set_xlabel(r"$\rho=P/S$")
     ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
     ax1.set_ylabel(r"$\delta$")
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
     ax1.set_zlabel(r"$\mathrm{d}h/h$")
     ax1.zaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0%}"))
+    ax1.zaxis.set_major_locator(mticker.MultipleLocator(base=0.050))
+
     ax1.view_init(elev=20, azim=-35)
 
     plt.tight_layout()
@@ -501,13 +505,17 @@ def plot_amortized_matching_T(
     ax1 = fig1.add_subplot(111, projection="3d")
     plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z= (p2 - p1) / p1 * (1 - d), cmap=cm.coolwarm_r)
 
-    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5, pad=0.125)
+    cbar_locator = mticker.MultipleLocator(base=0.02)
+    cbar_formatter = mticker.StrMethodFormatter("{x:,.0%}")
+    colorbar = fig1.colorbar(plot1, shrink=0.6, aspect=5, pad=0.125, format=cbar_formatter, ticks=cbar_locator)
     ax1.set_xlabel(r"$\rho=P/S$")
     ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
     ax1.set_ylabel(r"$\delta$")
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
     ax1.set_zlabel(r"$\mathrm{d}h/h$")
     ax1.zaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0%}"))
+    ax1.zaxis.set_major_locator(mticker.MultipleLocator(base=0.050))
+
     ax1.view_init(elev=20, azim=-35)
 
     plt.tight_layout()
