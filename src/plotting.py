@@ -444,25 +444,27 @@ def plot_annuity_matching_T(
     tau2: R,
     deltas: np.ndarray,
     gamma: R,
+    d: R,
 ) -> None:
     s1s = p1 / rho
 
     s1s, deltas = np.meshgrid(s1s, deltas)
-    dp = annuity_matching_T(p1, s1s, r1, r2, tau1, tau2, deltas, gamma)
+    p2 = annuity_matching_T(p1, s1s, r1, r2, tau1, tau2, deltas, gamma)
 
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111, projection="3d")
-    plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z=1 - dp / p1, cmap=cm.coolwarm)
+    plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z= (p2 - p1) / p1 * (1 - d), cmap=cm.coolwarm_r)
 
-    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5)
+    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5, pad=0.125)
     ax1.set_xlabel(r"$\rho=P/S$")
     ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
     ax1.set_ylabel(r"$\delta$")
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
-    ax1.set_zlabel(r"$1-\mathrm{d}p/p$")
+    ax1.set_zlabel(r"$\mathrm{d}h/h$")
     ax1.zaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0%}"))
-    ax1.view_init(elev=20, azim=150)
+    ax1.view_init(elev=20, azim=-35)
 
+    plt.tight_layout()
     plt.show()
 
 
@@ -471,11 +473,11 @@ import numpy as np
 
 from plotting import plot_annuity_matching_T
 
-gamma, tau1, tau2, deltas = 0.02, 0.30, 0.30, np.arange(0.25, 1.01, 0.01)
+gamma, tau1, tau2, deltas, d = 0.02, 0.30, 0.30, np.arange(0.25, 1.01, 0.01), 0.15
 p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5.5, 0.05)
 r2, s2 = 0.050, 500_000 * (1 + gamma)
 
-plot_annuity_matching_T(p1, rhos, r1, r2, tau1, tau2, deltas, gamma)
+plot_annuity_matching_T(p1, rhos, r1, r2, tau1, tau2, deltas, gamma, d)
 """
 
 
@@ -488,25 +490,27 @@ def plot_amortized_matching_T(
     tau2: R,
     deltas: np.ndarray,
     gamma: R,
+    d: R,
 ) -> None:
     s1s = p1 / rho
 
     s1s, deltas = np.meshgrid(s1s, deltas)
-    dp = amortized_matching_T(p1, s1s, r1, r2, tau1, tau2, deltas, gamma)
+    p2 = amortized_matching_T(p1, s1s, r1, r2, tau1, tau2, deltas, gamma)
 
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111, projection="3d")
-    plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z=1 - dp / p1, cmap=cm.coolwarm)
+    plot1 = ax1.plot_surface(X=p1 / s1s, Y=deltas, Z= (p2 - p1) / p1 * (1 - d), cmap=cm.coolwarm_r)
 
-    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5)
+    colorbar = fig1.colorbar(plot1, shrink=0.5, aspect=5, pad=0.125)
     ax1.set_xlabel(r"$\rho=P/S$")
     ax1.xaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
     ax1.set_ylabel(r"$\delta$")
     ax1.yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.2f}"))
-    ax1.set_zlabel(r"$1-\mathrm{d}p/p$")
+    ax1.set_zlabel(r"$\mathrm{d}h/h$")
     ax1.zaxis.set_major_formatter(mticker.StrMethodFormatter("{x:,.0%}"))
-    ax1.view_init(elev=20, azim=150)
+    ax1.view_init(elev=20, azim=-35)
 
+    plt.tight_layout()
     plt.show()
 
 
@@ -515,11 +519,11 @@ import numpy as np
 
 from plotting import plot_amortized_matching_T
 
-gamma, tau1, tau2, deltas = 0.02, 0.30, 0.30, np.arange(0.25, 1.01, 0.01)
+gamma, tau1, tau2, deltas, d = 0.02, 0.30, 0.30, np.arange(0.25, 1.01, 0.01), 0.15
 p1, r1, rhos = 2_000_000, 0.015, np.arange(2, 5.5, 0.05)
 r2, s2 = 0.050, 500_000 * (1 + gamma)
 
-plot_amortized_matching_T(p1, rhos, r1, r2, tau1, tau2, deltas, gamma)
+plot_amortized_matching_T(p1, rhos, r1, r2, tau1, tau2, deltas, gamma, d)
 """
 
 

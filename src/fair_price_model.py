@@ -43,3 +43,11 @@ def amortized_matching_T(
     p2 = a2 * TP2
 
     return p2
+
+
+def downpayment_correction(p0: R, p1: R, d: R) -> R:
+    """
+    Calculate housing price given that loan principal changed from `p0` to `p1`
+    and that down payment percantage for a home is `d`.
+    """
+    return (1 - d) * p1 + d * p0
